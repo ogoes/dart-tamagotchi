@@ -3,6 +3,7 @@ class Status {
   double happy;
   double hunger;
   bool dirt;
+  bool sleeping;
 
   bool get dead {
     if (health <= 0 || happy <= 0 || hunger <= 0) return true;
@@ -24,8 +25,21 @@ class Status {
     return false;
   }
 
+
+  bool get isDirt {
+    return dirt;
+  }
+
+  bool get isSleeping {
+    return sleeping;
+  }
+
   set dirty (bool d) {
     this.dirt = d;
+  }
+
+  set sleep (bool s) {
+    this.sleeping = s;
   }
 
   Status({this.health, this.happy, this.hunger, this.dirt}) {
