@@ -10,12 +10,6 @@ class Tired extends State {
   }
 
   @override
-  State update() {
-    // TODO: implement update
-    return this;
-  }
-
-  @override
   DateTime lastTime;
 
   @override

@@ -16,7 +16,6 @@ class Sick extends State {
     return this;
   }
 
-
   @override
   DateTime lastTime;
 

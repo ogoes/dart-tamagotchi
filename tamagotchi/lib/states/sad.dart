@@ -10,12 +10,6 @@ class Sad extends State {
   }
 
   @override
-  update() {
-    // TODO: implement update
-    return this;
-  }
-
-  @override
   DateTime lastTime;
 
   @override

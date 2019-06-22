@@ -16,13 +16,6 @@ class Normal extends State {
     if (this.rate == null) this.rate = Rate();
   }
 
-  
-
-  @override
-  State play() {
-    return this;
-  }
-
   @override
   Rate rate;
 
