@@ -42,7 +42,7 @@ class Status {
     this.sleeping = s;
   }
 
-  Status({this.health, this.happy, this.hunger, this.dirt}) {
+  Status({this.health, this.happy, this.hunger, this.dirt, this.sleeping}) {
     if (health == null) health = 100.0;
     if (happy == null) happy = 100.0;
     if (hunger == null) hunger = 100.0;
