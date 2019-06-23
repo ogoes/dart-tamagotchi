@@ -13,25 +13,18 @@ void main(List<String> args) {
 
     var a = stdin.readLineSync();
 
-    pet = a == '1'
-        ? pet.feed()
-        : a == '2'
-            ? pet.flush()
-            : a == '3'
-                ? pet.play()
-                : a == '4' ? pet.cure() : a == '5' ? pet.sleeping() : pet;
+    if (a == '1') {
+      pet = pet.feed();
+    } else if (a == '2') {
+      pet = pet.flush();
+    } else if (a == '3') {
+      pet = pet.play();
+    } else if (a == '4') {
+      pet = pet.cure();
+    } else if (a == '5') {
+      pet.sleep();
+    }
 
-    // if (a == '1') {
-    //   pet.feed();
-    // } else if (a == '2') {
-    //   pet.flush();
-    // } else if (a == '3') {
-    //   pet.play();
-    // } else if (a == '4') {
-    //   pet.cure();
-    // } else if (a == '5') {
-    //   pet.sleeping();
-    // }
     pet = pet.update();
 
     print(pet);
@@ -40,6 +33,5 @@ void main(List<String> args) {
     print("health ${pet.status.health}");
     print("happy ${pet.status.happy}");
     print("hunger ${pet.status.hunger}");
-
   }
 }
