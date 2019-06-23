@@ -23,15 +23,21 @@ class DbConnection {
   initDatabase() async {
     Directory documentDir = await getApplicationDocumentsDirectory();
     String path = join(documentDir.path, "tamagotchi.db");
-    return await openDatabase(path, version: 1, onOpen: (db) {},
-        onCreate: (Database db, int version) async {
-      await db.execute(dbCreation);
-    });
+    return await openDatabase(
+      path,
+      version: 1,
+      onOpen: (db) async {},
+      onCreate: (Database db, int version) async {
+        await db.execute(userCreation);
+        await db.execute(petCreation);
+      },
+    );
   }
 
   newUser(User source) async {
     final db = await connection;
-    var res = await db.insert('user', source.toJson());
+
+    var res = await db.rawInsert("INSERT INTO user (username, password) VALUES (?, ?);", [source.username, source.password]);
     return res;
   }
 
@@ -44,25 +50,40 @@ class DbConnection {
   getAllUsers() async {
     final db = await connection;
     var res = await db.query('user');
+    print(res.first);
     return res.isNotEmpty ? res.map((c) => User.fromJson(c)).toList() : [];
   }
 
-  getAllPets(User source) async {
+  getAllPetsByUser(User source) async {
     final db = await connection;
-    var res = await db.query('pet', where: "user_id = ?", whereArgs: [source.id]);
-    return res.isNotEmpty? res.map((pet) => Pet.fromJson(pet)).toList() : [];
+    var res =
+        await db.query('pet', where: "user_id = ?", whereArgs: [source.id]);
+    return res.isNotEmpty ? res.map((pet) => Pet.fromJson(pet)).toList() : [];
   }
 
-  getPet(int id) async {
+  getPetById(int id) async {
     final db = await connection;
     var res = await db.query('pet', where: "id = ?", whereArgs: [id]);
     return res.isNotEmpty ? Pet.fromJson(res.first) : null;
   }
-  
+
+  newPet(Pet source) async {
+    final db = await connection;
+
+    var res = await db.insert('pet', source.toJson());
+    return res;
+  }
+
   updatePet(Pet source) async {
     final db = await connection;
-    var res = await db.update('pet', source.toJson(), where: "id = ?", whereArgs: [source.id]);
+    var res = await db.update('pet', source.toJson(),
+        where: "id = ?", whereArgs: [source.id]);
     return res;
+  }
+
+  deleteAllUser() async {
+    final db = await connection;
+    db.delete('user');
   }
 
   deletePet(int id) async {
