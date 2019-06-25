@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tamagotchi/database/database.dart';
+import 'package:tamagotchi/models/user.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -41,7 +44,21 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void submit(String username, String password) async {}
+  void submit(String username, String password) async {
+    if (username.length > 0 && password.length > 0) {
+      List<User> users = await DbConnection.db.getUserByName(username);
+      final secureStorage = FlutterSecureStorage();
+
+      for (var u in users) {
+        if (u.username == username && u.password == password) {
+          await secureStorage.write(key: "user", value: "${u.id}.$username-$password");
+          await secureStorage.write(key: "logged", value: "yes");
+        }
+      }
+      // TODO: going to homepage
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -131,33 +148,53 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     Expanded(
                       flex: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 8),
-                        child: TextField(
-                          focusNode: _emailFocus,
-                          keyboardType: TextInputType.text,
-                          textInputAction: TextInputAction.go,
-                          controller: nameController,
-                          onSubmitted: (String text) {
-                            _fieldFocusChange(context, _emailFocus, _passFocus);
-                          },
-                          decoration: InputDecoration(
-                            hintText: "usuário",
-                            icon: Icon(
-                              FontAwesomeIcons.userAlt,
-                              color: Colors.blueAccent.withOpacity(0.6),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 8),
+                          child: TextField(
+                            style: new TextStyle(
+                              foreground: Paint()
+                                ..shader = LinearGradient(colors: [
+                                  Colors.blueAccent,
+                                  Colors.pink.withOpacity(0.005)
+                                ]).createShader(
+                                  Rect.fromCircle(
+                                    center: new Offset(174.0, 100.0),
+                                    radius: 180.0,
+                                  ),
+                                ),
+                              decoration: TextDecoration.none,
+                              fontFamily: "Montserrat",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                              // color: Colors.blueAccent.withOpacity(0.8)
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
+                            focusNode: _emailFocus,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.go,
+                            controller: nameController,
+                            onSubmitted: (String text) {
+                              _fieldFocusChange(
+                                  context, _emailFocus, _passFocus);
+                            },
+                            decoration: InputDecoration(
+                              hintText: "usuário",
+                              icon: Icon(
+                                FontAwesomeIcons.userAlt,
                                 color: Colors.blueAccent.withOpacity(0.6),
-                                width: 1.5,
                               ),
-                              borderRadius: BorderRadius.circular(10),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.blueAccent.withOpacity(0.6),
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                           ),
                         ),
@@ -165,50 +202,69 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     Expanded(
                       flex: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 8),
-                        child: TextField(
-                          focusNode: _passFocus,
-                          keyboardType: TextInputType.text,
-                          controller: passController,
-                          obscureText: !_visible,
-                          onSubmitted: (String text) {
-                            _passFocus.unfocus();
-                            submit(nameController.text, passController.text);
-                          },
-                          decoration: InputDecoration(
-                            hintText: "senha",
-                            icon: Icon(
-                              FontAwesomeIcons.unlock,
-                              color: Colors.blueAccent.withOpacity(0.6),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 8),
+                          child: TextField(
+                            style: new TextStyle(
+                              foreground: Paint()
+                                ..shader = LinearGradient(colors: [
+                                  Colors.blueAccent,
+                                  Colors.pink.withOpacity(0.005)
+                                ]).createShader(
+                                  Rect.fromCircle(
+                                    center: new Offset(174.0, 100.0),
+                                    radius: 180.0,
+                                  ),
+                                ),
+                              decoration: TextDecoration.none,
+                              fontFamily: "Montserrat",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                              // color: Colors.blueAccent.withOpacity(0.8)
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            suffixIcon: Container(
-                              width: MediaQuery.of(context).size.width / 9,
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _visible = !_visible;
-                                  });
-                                },
-                                child: Icon(
-                                  _visible
-                                      ? FontAwesomeIcons.solidEye
-                                      : FontAwesomeIcons.solidEyeSlash,
-                                  color: Colors.blueAccent.withOpacity(0.6),
+                            focusNode: _passFocus,
+                            keyboardType: TextInputType.text,
+                            controller: passController,
+                            obscureText: !_visible,
+                            onSubmitted: (String text) {
+                              _passFocus.unfocus();
+                              submit(nameController.text, passController.text);
+                            },
+                            decoration: InputDecoration(
+                              hintText: "senha",
+                              icon: Icon(
+                                FontAwesomeIcons.unlock,
+                                color: Colors.blueAccent.withOpacity(0.6),
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              suffixIcon: Container(
+                                width: MediaQuery.of(context).size.width / 9,
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      _visible = !_visible;
+                                    });
+                                  },
+                                  child: Icon(
+                                    _visible
+                                        ? FontAwesomeIcons.solidEye
+                                        : FontAwesomeIcons.solidEyeSlash,
+                                    color: Colors.blueAccent.withOpacity(0.6),
+                                  ),
                                 ),
                               ),
-                            ),
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.blueAccent.withOpacity(0.6),
-                                width: 1.5,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.blueAccent.withOpacity(0.6),
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                         ),
@@ -228,12 +284,12 @@ class _LoginPageState extends State<LoginPage> {
                               child: Text(
                                 "Cadastrar-se",
                                 style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 20,
-                                  fontStyle: FontStyle.italic,
-                                ),
+                                    decoration: TextDecoration.underline,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.black.withOpacity(0.5)),
                               ),
                             ),
                           ),
@@ -268,37 +324,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            Spacer(),
-            Spacer(),
-            Container(
-                child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Spacer(),
-                Text(
-                  "Feito com  ",
-                  style: TextStyle(
-                      fontFamily: 'Montserrat', color: Colors.black54),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: Icon(
-                    FontAwesomeIcons.heart,
-                    size: 13,
-                    color: Colors.red.withOpacity(0.5),
-                  ),
-                ),
-                Text("por",
-                    style: TextStyle(
-                        fontFamily: 'Montserrat', color: Colors.black54)),
-                Text(" ogoes",
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.bold,
-                    )),
-                Spacer(),
-              ],
-            )),
+            Spacer(
+              flex: 2,
+            ),
           ],
         ),
       ),
