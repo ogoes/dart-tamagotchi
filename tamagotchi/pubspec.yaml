@@ -30,6 +30,7 @@ dev_dependencies:
   sqflite: any
   path_provider: any
   font_awesome_flutter: any
+  flutter_secure_storage:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
