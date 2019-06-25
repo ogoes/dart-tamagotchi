@@ -50,8 +50,13 @@ class DbConnection {
   getAllUsers() async {
     final db = await connection;
     var res = await db.query('user');
-    print(res.first);
-    return res.isNotEmpty ? res.map((c) => User.fromJson(c)).toList() : [];
+    return res.isNotEmpty ? res.map((user) => User.fromJson(user)).toList() : [];
+  }
+
+  getUserByName(String username) async {
+    final db = await connection;
+    var res = await db.query('user', where: "username = ?", whereArgs: [username]);
+    return res.isNotEmpty? res.map((user) => User.fromJson(user)).toList(): [];
   }
 
   getAllPetsByUser(User source) async {
